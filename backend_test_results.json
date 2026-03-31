@@ -1,0 +1,149 @@
+{
+  "timestamp": "2026-03-31T15:58:22.418340",
+  "total_tests": 20,
+  "passed_tests": 20,
+  "failed_tests": 0,
+  "success_rate": 100.0,
+  "test_details": [
+    {
+      "test": "Health endpoint structure",
+      "success": true,
+      "details": "",
+      "expected": "",
+      "actual": ""
+    },
+    {
+      "test": "Health status",
+      "success": true,
+      "details": "",
+      "expected": "",
+      "actual": ""
+    },
+    {
+      "test": "Crime data loaded",
+      "success": true,
+      "details": "",
+      "expected": "",
+      "actual": ""
+    },
+    {
+      "test": "Districts count",
+      "success": true,
+      "details": "Found 20 districts",
+      "expected": "",
+      "actual": ""
+    },
+    {
+      "test": "Heatmap structure",
+      "success": true,
+      "details": "",
+      "expected": "",
+      "actual": ""
+    },
+    {
+      "test": "Heatmap points",
+      "success": true,
+      "details": "Found 974 heatmap points",
+      "expected": "",
+      "actual": ""
+    },
+    {
+      "test": "Heatmap point format",
+      "success": true,
+      "details": "",
+      "expected": "",
+      "actual": ""
+    },
+    {
+      "test": "Districts data",
+      "success": true,
+      "details": "Found 20 districts",
+      "expected": "",
+      "actual": ""
+    },
+    {
+      "test": "District data structure",
+      "success": true,
+      "details": "",
+      "expected": "",
+      "actual": ""
+    },
+    {
+      "test": "Map bounds",
+      "success": true,
+      "details": "",
+      "expected": "",
+      "actual": ""
+    },
+    {
+      "test": "Route structure (Kolkata Central to Salt Lake)",
+      "success": true,
+      "details": "",
+      "expected": "",
+      "actual": ""
+    },
+    {
+      "test": "Route geometry (Kolkata Central to Salt Lake)",
+      "success": true,
+      "details": "381 coordinates",
+      "expected": "",
+      "actual": ""
+    },
+    {
+      "test": "Safety score (Kolkata Central to Salt Lake)",
+      "success": true,
+      "details": "Score: 33/100",
+      "expected": "",
+      "actual": ""
+    },
+    {
+      "test": "Safety level (Kolkata Central to Salt Lake)",
+      "success": true,
+      "details": "Level: danger",
+      "expected": "",
+      "actual": ""
+    },
+    {
+      "test": "Route structure (Park Street to Howrah)",
+      "success": true,
+      "details": "",
+      "expected": "",
+      "actual": ""
+    },
+    {
+      "test": "Route geometry (Park Street to Howrah)",
+      "success": true,
+      "details": "182 coordinates",
+      "expected": "",
+      "actual": ""
+    },
+    {
+      "test": "Safety score (Park Street to Howrah)",
+      "success": true,
+      "details": "Score: 55/100",
+      "expected": "",
+      "actual": ""
+    },
+    {
+      "test": "Safety level (Park Street to Howrah)",
+      "success": true,
+      "details": "Level: moderate",
+      "expected": "",
+      "actual": ""
+    },
+    {
+      "test": "Districts endpoint",
+      "success": true,
+      "details": "Found 20 districts",
+      "expected": "",
+      "actual": ""
+    },
+    {
+      "test": "District structure",
+      "success": true,
+      "details": "",
+      "expected": "",
+      "actual": ""
+    }
+  ]
+}

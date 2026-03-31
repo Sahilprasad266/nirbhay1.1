@@ -1,0 +1,99 @@
+/* App-specific styles */
+.App {
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+}
+
+/* Custom marker styles */
+.custom-marker {
+  background: transparent;
+  border: none;
+}
+
+/* Pulse animation for markers */
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.2);
+    opacity: 0.7;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.marker-pulse {
+  animation: pulse 2s infinite;
+}
+
+/* Bottom sheet drag handle */
+.drag-handle {
+  cursor: grab;
+  touch-action: none;
+}
+
+.drag-handle:active {
+  cursor: grabbing;
+}
+
+/* Route line animations */
+@keyframes dash {
+  to {
+    stroke-dashoffset: -20;
+  }
+}
+
+.route-animated {
+  stroke-dasharray: 10, 10;
+  animation: dash 1s linear infinite;
+}
+
+/* Glass morphism effect */
+.glass {
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+/* Safety score colors */
+.score-safe {
+  color: #22c55e;
+}
+
+.score-moderate {
+  color: #f59e0b;
+}
+
+.score-danger {
+  color: #ef4444;
+}
+
+/* Map overlay gradient */
+.map-overlay-top {
+  background: linear-gradient(to bottom, rgba(255,255,255,0.9) 0%, transparent 100%);
+}
+
+.map-overlay-bottom {
+  background: linear-gradient(to top, rgba(255,255,255,0.9) 0%, transparent 100%);
+}
+
+/* Input focus ring */
+.input-focus-ring:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(79, 106, 246, 0.3);
+}
+
+/* Button press effect */
+.btn-press:active {
+  transform: scale(0.98);
+}
+
+/* Heatmap color definitions */
+.heatmap-safe { background-color: rgba(34, 197, 94, 0.6); }
+.heatmap-moderate { background-color: rgba(245, 158, 11, 0.6); }
+.heatmap-danger { background-color: rgba(239, 68, 68, 0.6); }
