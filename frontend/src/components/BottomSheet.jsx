@@ -1,8 +1,22 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { ChevronUp, ChevronDown, MapPin, Navigation, RotateCcw, Shield, Clock, Route, AlertTriangle } from 'lucide-react';
+import { ChevronUp, ChevronDown, MapPin, Navigation, RotateCcw, Shield, Clock, Route, AlertTriangle, Search, X } from 'lucide-react';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Progress } from './ui/progress';
+
+// Popular locations in Kolkata/West Bengal for quick selection
+const QUICK_LOCATIONS = [
+  { name: 'Howrah Station', lat: 22.5839, lng: 88.3428 },
+  { name: 'Salt Lake', lat: 22.5800, lng: 88.4179 },
+  { name: 'Park Street', lat: 22.5514, lng: 88.3528 },
+  { name: 'Esplanade', lat: 22.5638, lng: 88.3518 },
+  { name: 'Dum Dum', lat: 22.6225, lng: 88.4258 },
+  { name: 'New Town', lat: 22.5923, lng: 88.4851 },
+  { name: 'Sealdah', lat: 22.5697, lng: 88.3697 },
+  { name: 'Tollygunge', lat: 22.4984, lng: 88.3477 },
+  { name: 'Jadavpur', lat: 22.4989, lng: 88.3714 },
+  { name: 'Rajarhat', lat: 22.6158, lng: 88.4697 },
+];
 
 const BottomSheet = ({
   isExpanded,
@@ -22,6 +36,8 @@ const BottomSheet = ({
 }) => {
   const [sourceInput, setSourceInput] = useState('');
   const [destInput, setDestInput] = useState('');
+  const [showSourceSuggestions, setShowSourceSuggestions] = useState(false);
+  const [showDestSuggestions, setShowDestSuggestions] = useState(false);
   const sheetRef = useRef(null);
   const [isDragging, setIsDragging] = useState(false);
   const [startY, setStartY] = useState(0);
@@ -60,18 +76,42 @@ const BottomSheet = ({
   };
 
   const handleSourceChange = (e) => {
-    setSourceInput(e.target.value);
-    if (e.target.value === '') {
+    const value = e.target.value;
+    setSourceInput(value);
+    setShowSourceSuggestions(value.length > 0);
+    if (value === '') {
       setSource(null);
     }
   };
 
   const handleDestChange = (e) => {
-    setDestInput(e.target.value);
-    if (e.target.value === '') {
+    const value = e.target.value;
+    setDestInput(value);
+    setShowDestSuggestions(value.length > 0);
+    if (value === '') {
       setDestination(null);
     }
   };
+
+  const selectSourceLocation = (location) => {
+    setSource({ lat: location.lat, lng: location.lng, name: location.name });
+    setSourceInput(location.name);
+    setShowSourceSuggestions(false);
+  };
+
+  const selectDestLocation = (location) => {
+    setDestination({ lat: location.lat, lng: location.lng, name: location.name });
+    setDestInput(location.name);
+    setShowDestSuggestions(false);
+  };
+
+  const filteredSourceLocations = QUICK_LOCATIONS.filter(loc =>
+    loc.name.toLowerCase().includes(sourceInput.toLowerCase())
+  );
+
+  const filteredDestLocations = QUICK_LOCATIONS.filter(loc =>
+    loc.name.toLowerCase().includes(destInput.toLowerCase())
+  );
 
   const handleFindRoute = () => {
     if (source && destination) {
@@ -82,6 +122,8 @@ const BottomSheet = ({
   const handleReset = () => {
     setSourceInput('');
     setDestInput('');
+    setShowSourceSuggestions(false);
+    setShowDestSuggestions(false);
     onReset();
   };
 
@@ -112,11 +154,13 @@ const BottomSheet = ({
     }
   };
 
+  const canFindRoute = source && destination;
+
   return (
     <div
       ref={sheetRef}
       className={`fixed bottom-0 left-0 right-0 bg-white rounded-t-3xl shadow-2xl transition-all duration-300 ease-out z-50 safe-area-bottom ${
-        isExpanded ? 'h-[70vh]' : route ? 'h-[260px]' : 'h-[100px]'
+        isExpanded ? 'h-[75vh]' : route ? 'h-[260px]' : 'h-[100px]'
       }`}
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
@@ -226,6 +270,17 @@ const BottomSheet = ({
               <Navigation className="w-5 h-5 mr-2" />
               Start Navigation
             </Button>
+
+            {/* New Route Button */}
+            <Button 
+              variant="outline"
+              className="w-full h-10 mt-3 rounded-xl text-gray-600"
+              onClick={handleReset}
+              data-testid="new-route-btn"
+            >
+              <RotateCcw className="w-4 h-4 mr-2" />
+              Plan New Route
+            </Button>
           </div>
         )}
 
@@ -244,44 +299,125 @@ const BottomSheet = ({
             ) : (
               <>
                 <h3 className="text-xl font-semibold text-gray-800 mb-1">Plan Your Route</h3>
-                <p className="text-sm text-gray-500 mb-4">We'll find the safest path for you</p>
+                <p className="text-sm text-gray-500 mb-4">Select locations from suggestions below</p>
 
                 {/* Source Input */}
                 <div className="relative mb-3">
-                  <div className="absolute left-3 top-1/2 -translate-y-1/2 flex items-center gap-2">
+                  <div className="absolute left-3 top-1/2 -translate-y-1/2 flex items-center gap-2 z-10">
                     <div className="w-3 h-3 bg-blue-500 rounded-full" />
                   </div>
                   <Input
-                    placeholder="Current Location"
+                    placeholder="Start location"
                     value={sourceInput}
                     onChange={handleSourceChange}
-                    className="pl-10 h-12 bg-gray-50 border-gray-200 rounded-xl text-base"
+                    onFocus={() => setShowSourceSuggestions(true)}
+                    className="pl-10 pr-20 h-12 bg-gray-50 border-gray-200 rounded-xl text-base"
                     data-testid="source-input"
                   />
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="absolute right-2 top-1/2 -translate-y-1/2 text-blue-500 text-xs font-medium"
-                    onClick={onUseMyLocation}
-                    data-testid="use-gps-btn"
-                  >
-                    Use GPS
-                  </Button>
+                  {source ? (
+                    <button
+                      className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-gray-400 hover:text-gray-600"
+                      onClick={() => { setSource(null); setSourceInput(''); }}
+                    >
+                      <X className="w-4 h-4" />
+                    </button>
+                  ) : (
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="absolute right-2 top-1/2 -translate-y-1/2 text-blue-500 text-xs font-medium h-8"
+                      onClick={onUseMyLocation}
+                      data-testid="use-gps-btn"
+                    >
+                      Use GPS
+                    </Button>
+                  )}
+                  
+                  {/* Source Suggestions */}
+                  {showSourceSuggestions && !source && (
+                    <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-xl shadow-lg max-h-48 overflow-y-auto z-50">
+                      {filteredSourceLocations.length > 0 ? (
+                        filteredSourceLocations.map((loc, idx) => (
+                          <button
+                            key={idx}
+                            className="w-full px-4 py-3 text-left hover:bg-gray-50 flex items-center gap-3 border-b border-gray-100 last:border-0"
+                            onClick={() => selectSourceLocation(loc)}
+                            data-testid={`source-suggestion-${idx}`}
+                          >
+                            <MapPin className="w-4 h-4 text-gray-400" />
+                            <span className="text-sm text-gray-700">{loc.name}</span>
+                          </button>
+                        ))
+                      ) : (
+                        <div className="px-4 py-3 text-sm text-gray-500">
+                          No locations found. Try: Howrah, Salt Lake, Park Street
+                        </div>
+                      )}
+                    </div>
+                  )}
                 </div>
 
                 {/* Destination Input */}
                 <div className="relative mb-4">
-                  <div className="absolute left-3 top-1/2 -translate-y-1/2 flex items-center gap-2">
+                  <div className="absolute left-3 top-1/2 -translate-y-1/2 flex items-center gap-2 z-10">
                     <div className="w-3 h-3 bg-green-500 rounded-full" />
                   </div>
                   <Input
-                    placeholder="Where are you going?"
+                    placeholder="Destination"
                     value={destInput}
                     onChange={handleDestChange}
-                    className="pl-10 h-12 bg-gray-50 border-gray-200 rounded-xl text-base"
+                    onFocus={() => setShowDestSuggestions(true)}
+                    className="pl-10 pr-10 h-12 bg-gray-50 border-gray-200 rounded-xl text-base"
                     data-testid="destination-input"
                   />
+                  {destination && (
+                    <button
+                      className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-gray-400 hover:text-gray-600"
+                      onClick={() => { setDestination(null); setDestInput(''); }}
+                    >
+                      <X className="w-4 h-4" />
+                    </button>
+                  )}
+                  
+                  {/* Destination Suggestions */}
+                  {showDestSuggestions && !destination && (
+                    <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-xl shadow-lg max-h-48 overflow-y-auto z-50">
+                      {filteredDestLocations.length > 0 ? (
+                        filteredDestLocations.map((loc, idx) => (
+                          <button
+                            key={idx}
+                            className="w-full px-4 py-3 text-left hover:bg-gray-50 flex items-center gap-3 border-b border-gray-100 last:border-0"
+                            onClick={() => selectDestLocation(loc)}
+                            data-testid={`dest-suggestion-${idx}`}
+                          >
+                            <MapPin className="w-4 h-4 text-gray-400" />
+                            <span className="text-sm text-gray-700">{loc.name}</span>
+                          </button>
+                        ))
+                      ) : (
+                        <div className="px-4 py-3 text-sm text-gray-500">
+                          No locations found. Try: Howrah, Salt Lake, Park Street
+                        </div>
+                      )}
+                    </div>
+                  )}
                 </div>
+
+                {/* Selected locations indicator */}
+                {(source || destination) && (
+                  <div className="mb-4 p-3 bg-blue-50 rounded-xl text-sm">
+                    <div className="flex items-center gap-2 text-blue-700">
+                      <MapPin className="w-4 h-4" />
+                      <span>
+                        {source && destination 
+                          ? 'Both locations set - Ready to find route!'
+                          : source 
+                            ? 'Source set. Now select destination.'
+                            : 'Destination set. Now select source.'}
+                      </span>
+                    </div>
+                  </div>
+                )}
 
                 {/* Mode Toggle */}
                 <div className="mb-4">
@@ -328,13 +464,23 @@ const BottomSheet = ({
 
                 {/* Find Route Button */}
                 <Button 
-                  className="w-full h-14 bg-blue-500 hover:bg-blue-600 text-white font-semibold rounded-xl text-lg disabled:opacity-50"
+                  className={`w-full h-14 font-semibold rounded-xl text-lg transition-all ${
+                    canFindRoute 
+                      ? 'bg-blue-500 hover:bg-blue-600 text-white' 
+                      : 'bg-gray-200 text-gray-400 cursor-not-allowed'
+                  }`}
                   onClick={handleFindRoute}
-                  disabled={!source || !destination}
+                  disabled={!canFindRoute}
                   data-testid="submit-route-btn"
                 >
-                  Find Safest Route
-                  <ChevronUp className="w-5 h-5 ml-2" />
+                  {canFindRoute ? (
+                    <>
+                      Find Safest Route
+                      <ChevronUp className="w-5 h-5 ml-2" />
+                    </>
+                  ) : (
+                    'Select both locations'
+                  )}
                 </Button>
               </>
             )}
